@@ -52,3 +52,27 @@ exports.loginController = async (req, res) => {
         res.status(401).json(err)
     }
 }
+
+
+//myprofile
+exports.myProfileController = async (req, res) => {
+    console.log("inside loginContmyProfileControllerroller");
+    // get user detail from req body
+    const { firstname, lastname, email, password, phone  } = req.body
+    console.log(firstname, lastname, email, password, phone );
+
+    try {
+        const existingUser = await users.findOne({ email })
+        if (existingUser) {
+            const token = jwt.sign({userId:existingUser._id},process.env.JWT_PASSWORD)
+            res.status(200).json({
+                user: existingUser,
+                token
+            })
+        } else {
+            res.status(404).json("Something went wrong")
+        }
+    } catch (err) {
+        res.status(401).json(err)
+    }
+}

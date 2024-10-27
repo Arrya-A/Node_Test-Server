@@ -62,17 +62,25 @@ exports.myProfileController = async (req, res) => {
     console.log(firstname, lastname, email, password, phone );
 
     try {
-        const existingUser = await users.findOne({ email })
-        if (existingUser) {
-            const token = jwt.sign({userId:existingUser._id},process.env.JWT_PASSWORD)
-            res.status(200).json({
-                user: existingUser,
-                token
-            })
+        const userId = req.userId;
+        const user = await users.findById(userId);
+        if (user) {
+            res.status(200).json(user);
         } else {
-            res.status(404).json("Something went wrong")
+            res.status(404).json("User not found");
         }
     } catch (err) {
+        res.status(401).json(err);
+    }
+}
+
+// get alluser
+exports.allUsersController=async(req,res)=>{
+    console.log("Inside allUsersController ");
+    try{
+        const allUsers=await users.find()
+        res.status(200).json(allUsers)
+    }catch(err){
         res.status(401).json(err)
     }
 }
